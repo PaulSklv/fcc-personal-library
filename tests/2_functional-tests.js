@@ -84,24 +84,13 @@ suite("Functional Tests", function() {
           chai
             .request(server)
             .post("api/books")
+            .send({
+              title: ''
+            })
             .end((err, res) => {
               assert.equal(res.status, 200);
-              assert.isObject(res.body, "response should be an Object");
-              assert.property(
-                res.body,
-                "title",
-                "Book object should contain field title"
-              );
-              assert.property(
-                res.body,
-                "_id",
-                "Book object should contain field _id "
-              );
-              assert.property(
-                res.body,
-                "comments",
-                "Book object should contain field comments "
-              );
+              assert.equal(res.text, "missing title!");
+            
               done();
             });
         });
@@ -110,17 +99,56 @@ suite("Functional Tests", function() {
 
     suite("GET /api/books => array of books", function() {
       test("Test GET /api/books", function(done) {
-        //done();
+        chai
+          .request(server)
+          .get("/api/books")
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.isArray(res.body, "response should be an array");
+            assert.property(
+              res.body[0],
+              "commentcount",
+              "Books in array should contain commentcount"
+            );
+            assert.property(
+              res.body[0],
+              "title",
+              "Books in array should contain title"
+            );
+            assert.property(
+              res.body[0],
+              "_id",
+              "Books in array should contain _id"
+            );
+            done();
+          });
       });
     });
-
+    let id;
     suite("GET /api/books/[id] => book object with [id]", function() {
       test("Test GET /api/books/[id] with id not in db", function(done) {
-        //done();
+        chai
+        .request(server)
+        .get("/api/books/vcxcvsdvewvxvxcv")
+        .end(function(err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "book with this id doesnt exist.");
+
+          done();
+        });
       });
 
       test("Test GET /api/books/[id] with valid id in db", function(done) {
-        //done();
+        chai
+        .request(server)
+        .get("/api/books/" + id)
+        .end(function(err, res) {
+          assert.equal(res.status, 200);
+          assert.property(res.body, "title");
+          assert.property(res.body, "_id");
+          assert.isArray(res.body, "comments");
+          done();
+        });
       });
     });
 

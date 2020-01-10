@@ -46,7 +46,7 @@ module.exports = function(app) {
 
     .post(function(req, res) {
       const title = req.body.title;
-      if(title === "" || !title) {
+      if (title === "" || !title) {
         return res.send("missing title!");
       }
       connection
@@ -97,7 +97,11 @@ module.exports = function(app) {
             .db("personalLibrary")
             .collection("books")
             .findOne({ _id: new ObjectId(bookid) })
-            .then(result => res.json(result))
+            .then(result => {
+              if (result === null) {
+                res.send("book with this id doesnt exist.");
+              } else res.json(result);
+            })
             .catch(error => {
               return console.log("Something went wrond!", error);
             });
@@ -111,7 +115,7 @@ module.exports = function(app) {
     .post(function(req, res) {
       var bookid = req.params.id;
       var comment = req.body.comment;
-      console.log(bookid)
+      console.log(bookid);
       connection
         .then(client => {
           client
