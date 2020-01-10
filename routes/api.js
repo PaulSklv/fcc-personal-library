@@ -19,21 +19,21 @@ const connection = MongoClient.connect(process.env.MONGO_URI, {
 });
 
 module.exports = function(app) {
-  let allBooks = [];
+  
   app
     .route("/api/books")
     .get(function(req, res) {
-      
+       let allBooks = [];
       connection.then(client => {
-        allBooks = [];
         client
           .db("personalLibrary")
           .collection("books")
           .find({})
-          .forEach(book => {
+          .map(book => {
             allBooks = [...allBooks, { _id: book._id, title: book.title, commentcount: book.comments.length}];
           
           });
+        console.log(allBooks)
         res.json(allBooks);
       });
       //response will be array of book objects
