@@ -55,6 +55,9 @@ suite("Functional Tests", function() {
           chai
             .request(server)
             .post("api/books")
+            .send({
+              title: "Title"
+            })
             .end((err, res) => {
               assert.equal(res.status, 200);
               assert.isObject(res.body, "response should be an Object");
@@ -78,7 +81,29 @@ suite("Functional Tests", function() {
         });
 
         test("Test POST /api/books with no title given", function(done) {
-          //done();
+          chai
+            .request(server)
+            .post("api/books")
+            .end((err, res) => {
+              assert.equal(res.status, 200);
+              assert.isObject(res.body, "response should be an Object");
+              assert.property(
+                res.body,
+                "title",
+                "Book object should contain field title"
+              );
+              assert.property(
+                res.body,
+                "_id",
+                "Book object should contain field _id "
+              );
+              assert.property(
+                res.body,
+                "comments",
+                "Book object should contain field comments "
+              );
+              done();
+            });
         });
       }
     );
