@@ -114,6 +114,19 @@ module.exports = function(app) {
 
     .delete(function(req, res) {
       var bookid = req.params.id;
+      connection.then(client => {
+        client
+          .db("personalLibrary")
+          .db("books")
+          .findOneAndDelete({ _id: new ObjectId(bookid) })
+          .then(result => {
+            if(result === null) {
+              res.send("No book exists.");
+            } else {
+              res.send("Delete successfull!");
+            }
+          });
+      });
       //if successful response will be 'delete successful'
     });
 };
