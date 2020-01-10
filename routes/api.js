@@ -93,8 +93,15 @@ module.exports = function(app) {
       var bookid = req.params.id;
       var comment = req.body.comment;
       connection.then(client => {
-        client.db("personalLibrary").collection("books").updateOne({ _id: new ObjectId(bookid) }, )
-      })
+        client
+          .db("personalLibrary")
+          .collection("books")
+          .updateOne(
+            { _id: new ObjectId(bookid) },
+            { $push: { comments: comment } }
+          )
+          .then(result => res.send(result));
+      });
       //json res format same as .get
     })
 
