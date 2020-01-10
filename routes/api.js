@@ -92,16 +92,23 @@ module.exports = function(app) {
     .post(function(req, res) {
       var bookid = req.params.id;
       var comment = req.body.comment;
-      connection.then(client => {
-        client
-          .db("personalLibrary")
-          .collection("books")
-          .updateOne(
-            { _id: new ObjectId(bookid) },
-            { $push: { comments: comment } }
-          )
-          .then(result => res.send(result));
-      });
+      connection
+        .then(client => {
+          client
+            .db("personalLibrary")
+            .collection("books")
+            .findOneAndUpdate(
+              { _id: new ObjectId(bookid) },
+              { $push: { comments: comment } }
+            )
+            .then(result => res.send(result.value))
+            .catch(error => {
+              return console.log("Something went wrong!", error);
+            });
+        })
+        .catch(error => {
+          return console.log("Something went wrong!", error);
+        });
       //json res format same as .get
     })
 
