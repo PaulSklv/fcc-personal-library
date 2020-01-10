@@ -19,23 +19,27 @@ const connection = MongoClient.connect(process.env.MONGO_URI, {
 });
 
 module.exports = function(app) {
-  
   app
     .route("/api/books")
     .get(function(req, res) {
-       let allBooks = [];
-      connection.then(client => {
-        client
-          .db("personalLibrary")
-          .collection("books")
-          .find({})
-          .map(book => {
-            allBooks = [...allBooks, { _id: book._id, title: book.title, commentcount: book.comments.length}];
-          
-          });
-        console.log(allBooks)
-        res.json(allBooks);
-      });
+      connection
+        .then(client => {
+          client
+            .db("personalLibrary")
+            .collection("books")
+            .find({})
+            .toArray()
+            .then(result => {
+              const allBooks = result.map(book => {
+                const { comments, ...rest } = book;
+                rest.countcomments = book.comments.length;
+                return rest;
+              });
+              res.json(allBooks);
+            })
+            .catch(error => console.log("Somthing went wrong!", error));
+        })
+        .catch(error => console.log("Somthing went wrong!", error));
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
     })
@@ -68,6 +72,9 @@ module.exports = function(app) {
     .route("/api/books/:id")
     .get(function(req, res) {
       var bookid = req.params.id;
+      connection.then(client => {
+        client.db("personalLibrary").collection("books").findOne({ _id: new ObjectId(bookid) }).then(result => res.send())
+      })
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
 
