@@ -22,7 +22,19 @@ module.exports = function(app) {
   app
     .route("/api/books")
     .get(function(req, res) {
-      connection.then(client => {client.db("perso")})
+      connection.then(client => {
+        let allBooks = [];
+        client
+          .db("personalLibrary")
+          .collection("books")
+          .find({})
+          .forEach(book => {
+            allBooks = [...allBooks, { _id: book._id, title: book.title, commentcount: book.comments.length}];
+            console.log(allBooks)
+          });
+        console.log(allBooks)
+        res.send(allBooks);
+      });
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
     })
