@@ -41,6 +41,9 @@ suite('Functional Tests', function() {
     suite('POST /api/books with title => create book object/expect book object', function() {
       
       test('Test POST /api/books with title', function(done) {
+        chai.request(server).post('api/books').end((err, res) => {
+          asser.equal(res.status, 200)
+        })
         //done();
       });
       

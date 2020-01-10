@@ -65,7 +65,22 @@ module.exports = function(app) {
     })
 
     .delete(function(req, res) {
-      connection.db("personalLibrary").collection()
+      connection
+        .then(client => {
+          client
+            .db("personalLibrary")
+            .collection("books")
+            .deleteMany({})
+            .then(() => {
+              res.send("complete delete successful!");
+            })
+            .catch(error => {
+              console.log("Something went wrong!", error);
+            });
+        })
+        .catch(error => {
+          console.log("Something went wrong!", error);
+        });
       //if successful response will be 'complete delete successful'
     });
 
