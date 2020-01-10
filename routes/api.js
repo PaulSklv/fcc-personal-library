@@ -46,6 +46,9 @@ module.exports = function(app) {
 
     .post(function(req, res) {
       const title = req.body.title;
+      if(title === "") {
+        return res.send("missing title!");
+      }
       connection
         .then(client => {
           client
@@ -108,6 +111,9 @@ module.exports = function(app) {
     .post(function(req, res) {
       var bookid = req.params.id;
       var comment = req.body.comment;
+      if(bookid === "") {
+        return res.send("missing book ID!");
+      }
       connection
         .then(client => {
           client
