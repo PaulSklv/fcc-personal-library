@@ -32,7 +32,7 @@ module.exports = function(app) {
             .then(result => {
               const allBooks = result.map(book => {
                 const { comments, ...rest } = book;
-                rest.countcomments = book.comments.length;
+                rest.commentcount = book.comments.length;
                 return rest;
               });
               res.json(allBooks);
