@@ -72,15 +72,29 @@ module.exports = function(app) {
     .route("/api/books/:id")
     .get(function(req, res) {
       var bookid = req.params.id;
-      connection.then(client => {
-        client.db("personalLibrary").collection("books").findOne({ _id: new ObjectId(bookid) }).then(result => res.send())
-      })
+      connection
+        .then(client => {
+          client
+            .db("personalLibrary")
+            .collection("books")
+            .findOne({ _id: new ObjectId(bookid) })
+            .then(result => res.json(result))
+            .catch(error => {
+              return console.log("Something went wrond!", error);
+            });
+        })
+        .catch(error => {
+          return console.log("Something went wrond!", error);
+        });
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
 
     .post(function(req, res) {
       var bookid = req.params.id;
       var comment = req.body.comment;
+      connection.then(client => {
+        client.db("personalLibrary").collection("books").updateOne({ _id: new ObjectId(bookid) }, )
+      })
       //json res format same as .get
     })
 
